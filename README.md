@@ -36,7 +36,8 @@
 
   * 修改 2D Nav Goal 按鈕話題
     * RViz 的左上角 Panels → Add New Panel → Tool Property
-    ![](images/intro7.png)
+
+        ![](images/intro7.png)
     ![](images/intro8.png)
 
     * 將 2D Nav Goal → Topic 修改為 /move_base_simple/goal_temp
