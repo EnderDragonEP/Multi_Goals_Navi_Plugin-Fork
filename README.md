@@ -67,7 +67,7 @@
 * 設定任務
 
   * 設定任務目標點個數，點選確認保存
-    ![](images/intro16.png)
+  ![](images/intro16.png)
 
   * 設定目標點
     點選ToolBar上的2D Nav Goal，在地圖上給定目標點。（每次設定都需要先點選2D Nav Goal）
