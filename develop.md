@@ -1,81 +1,81 @@
-#  源码解析 | SLAM 多点导航开发思路介绍
+#  原始碼解析 | SLAM 多點導航開發思路介紹
 
-### 开发背景：
+### 開發背景：
 
-在使用 ROS Navigation & RViz 进行 2D Nav Goal 导航的时候，我们会遇到这些情况：
+在使用 ROS Navigation & RViz 進行 2D Nav Goal 導航的時候，我們會遇到這些情況：
 
-1. 给定导航的目标点只能设置一个，当有多点任务时需要等待一个个任务结束后，再次手动给目标
-2. 无法暂停或取消任务
-3. 任务不可循环
+1. 給定導航的目標點只能設定一個，當有多點任務時需要等待一個個任務結束後，再次手動給目標
+2. 無法暫停或取消任務
+3. 任務不可循環
 
-### 开发目的：
+### 開發目的：
 
-完成多目标点导航，可以对导航环节进行操控，如可循环、取消、重置任务等。
+完成多目標點導航，可以對導航環節進行操控，如可循環、取消、重設任務等。
 
-### 开发思路：
+### 開發思路：
 
-1. 2D Nav Goal 的单点导航是如何实现的？
+1. 2D Nav Goal 的單點導航是如何實現的？
 
-我们可以知道导航目标是通过 RViz 工具栏中 2D Nav Goal发布出去的。
+我們可以知道導航目標是通過 RViz 工具列中 2D Nav Goal發佈出去的。
 
-通过查看 RViz的配置文件或者 Panels->Add New Panel-> Tool Property ，可以了解当使用2D Nav Goal 在地图上拉了一个箭头（给定目标点时），其实是向话题 /move_base_simple/goal 发布了 [geometry_msgs/PoseStamped](http://docs.ros.org/en/api/geometry_msgs/html/msg/PoseStamped.html) 类型的消息，这个是目标点的位姿，包含坐标点与朝向。
+通過查看 RViz的組態檔案或者 Panels->Add New Panel-> Tool Property ，可以瞭解當使用2D Nav Goal 在地圖上拉了一個箭頭（給定目標點時），其實是向話題 /move_base_simple/goal 發佈了 [geometry_msgs/PoseStamped](http://docs.ros.org/en/api/geometry_msgs/html/msg/PoseStamped.html) 類型的消息，這個是目標點的位姿，包含坐標點與朝向。
 
-根据 NodeGraph 可以看到话题 /move_base_simple/goal 被导航包的节点 /move_base 订阅了，进而发给 Navigation 中的各个话题，完成导航。
+根據 NodeGraph 可以看到話題 /move_base_simple/goal 被導航包的節點 /move_base 訂閱了，進而發給 Navigation 中的各個話題，完成導航。
 
 ![](images/dev1.png)
 
-2. 如何基于单点实现多点导航？
+2. 如何基於單點實現多點導航？
 
-要在单点基础上实现多目标点导航的话，就要设计一个关于多个导航目标点消息geometry_msgs/PoseStamped的数据结构，并对多个目标点进行处理，完成导航。
+要在單點基礎上實現多目標點導航的話，就要設計一個關於多個導航目標點消息geometry_msgs/PoseStamped的資料結構，並對多個目標點進行處理，完成導航。
 
-实现多点的方法有多种，在不打破 ROS Navigation 包的完整性的前提下，我选择在2D Nav Goal的 RViz节点和 /move_base 节点中间添加了一个话题 /move_base_simple/goal_temp，将原本发送给 /move_base_simple/goal 的消息，转发给/move_base_simple/goal_temp，通过此话题来积攒多个 2D Nav Goal（任务队列），并根据任务完成的状态反馈，按顺序将每个导航目标点消息 geometry_msgs/PoseStamped 再发送给话题/move_base_simple/goal，以完成多任务中的单次目标点的导航（如下图示）。
+實現多點的方法有多種，在不打破 ROS Navigation 包的完整性的前提下，我選擇在2D Nav Goal的 RViz節點和 /move_base 節點中間新增了一個話題 /move_base_simple/goal_temp，將原本傳送給 /move_base_simple/goal 的消息，轉發給/move_base_simple/goal_temp，通過此話題來積攢多個 2D Nav Goal（任務佇列），並根據任務完成的狀態反饋，按順序將每個導航目標點消息 geometry_msgs/PoseStamped 再傳送給話題/move_base_simple/goal，以完成多工中的單次目標點的導航（如下圖示）。
 
 ![](images/dev2.jpg)
 
-3. 如何来发布多点任务？
+3. 如何來發佈多點任務？
 
-像 2D Nav Goal 一样，我们也可以在 RViz 中开发可视化的操作栏，这要使用到 RViz plugin ， ROS中的可视化工具绝大部分都是基于Qt进行开发的，此前古月居有过详细介绍，可参考[这篇文章](https://zhuanlan.zhihu.com/p/39390512)。
+像 2D Nav Goal 一樣，我們也可以在 RViz 中開發可視化的操作欄，這要使用到 RViz plugin ， ROS中的可視化工具絕大部分都是基於Qt進行開發的，此前古月居有過詳細介紹，可參考[這篇文章](https://zhuanlan.zhihu.com/p/39390512)。
 
-### 最终效果
+### 最終效果
 
-首先，我们来看一下最终的实现效果。
+首先，我們來看一下最終的實現效果。
 
-MultiNaviGoalsPanel是多点SLAM导航任务的可视化操作区，包括任务点列表、循环、重置、取消、开始任务。
+MultiNaviGoalsPanel是多點SLAM導航任務的可視化操作區，包括任務點列表、循環、重設、取消、開始任務。
 
-通过 RViz plugin 设计的Mark Display，能够显示的目标点的标号及箭头（朝向）。
+通過 RViz plugin 設計的Mark Display，能夠顯示的目標點的標號及箭頭（朝向）。
 
 ![](images/dev3.png)
 
 
-### 源代码
+### 原始碼
 
-项目地址：https://github.com/autolaborcenter/rviz_navi_multi_goals_pub_plugin
+項目地址：https://github.com/autolaborcenter/rviz_navi_multi_goals_pub_plugin
 
 
-#### 代码实现
+#### 程式碼實現
 
-#### 1. 头文件 multi_navi_goal_panel.h
+#### 1. 標頭檔 multi_navi_goal_panel.h
 
-Qt说明：
+Qt說明：
 
-* 文字编辑——QLineEdit
-* 按键——QPushButton
+* 文字編輯——QLineEdit
+* 按鍵——QPushButton
 * 列表——QTableWidget
-* 复选框——QCheckBox
-* 文字显示——QString
+* 複選框——QCheckBox
+* 文字顯示——QString
 
-ROS说明:
+ROS說明:
 
 Publisher：
 
-* 发送每个目标点消息给/move_base_simple/goal的goal_pub_
-* 发送取消指令消息给/move_base/cancel的cancel_pub_
-* 发送文字和箭头标记的mark_pub_。
+* 傳送每個目標點消息給/move_base_simple/goal的goal_pub_
+* 傳送取消指令消息給/move_base/cancel的cancel_pub_
+* 傳送文字和箭頭標記的mark_pub_。
 
 Subsrciber：
 
-* 订阅来自rviz中2D Nav Goal的导航目标点消息的goal_sub_
-* 订阅目前导航状态的status_sub_
+* 訂閱來自rviz中2D Nav Goal的導航目標點消息的goal_sub_
+* 訂閱目前導航狀態的status_sub_
 
 
 ```
@@ -88,11 +88,11 @@ Subsrciber：
 #include <ros/ros.h>
 #include <ros/console.h>
 
-#include <rviz/panel.h>//plugin基类的头文件
+#include <rviz/panel.h>//plugin基類的標頭檔
 
-#include <QPushButton>//Qt按钮
+#include <QPushButton>//Qt按鈕
 #include <QTableWidget>//Qt表格
-#include <QCheckBox>//Qt复选框
+#include <QCheckBox>//Qt複選框
 
 #include <visualization_msgs/Marker.h>
 #include <geometry_msgs/PoseArray.h>
@@ -111,31 +111,31 @@ namespace navi_multi_goals_pub_rviz_plugin {
         explicit MultiNaviGoalsPanel(QWidget *parent = 0);
 
     public Q_SLOTS:
-        void setMaxNumGoal(const QString &maxNumGoal);//设置最大可设置的目标点数量
-        void writePose(geometry_msgs::Pose pose);//将目标点位姿写入任务列表
-        void markPose(const geometry_msgs::PoseStamped::ConstPtr &pose);//在地图中标记目标位姿
-        void deleteMark();//删除标记
+        void setMaxNumGoal(const QString &maxNumGoal);//設定最大可設定的目標點數量
+        void writePose(geometry_msgs::Pose pose);//將目標點位姿寫入任務列表
+        void markPose(const geometry_msgs::PoseStamped::ConstPtr &pose);//在地圖中標記目標位姿
+        void deleteMark();//刪除標記
     protected Q_SLOTS:
 
-        void updateMaxNumGoal();             // 更新最大可设置的目标点数量
-        void initPoseTable();               // 初始化目标点表格
+        void updateMaxNumGoal();             // 更新最大可設定的目標點數量
+        void initPoseTable();               // 初始化目標點表格
 
-        void updatePoseTable();             // 更新目标点表格
-        void startNavi();                   // 开始第一个目标点任务导航
-        void cancelNavi();                  // 取消现在进行中的导航
+        void updatePoseTable();             // 更新目標點表格
+        void startNavi();                   // 開始第一個目標點任務導航
+        void cancelNavi();                  // 取消現在進行中的導航
 
-        void goalCntCB(const geometry_msgs::PoseStamped::ConstPtr &pose);  // 目标数量子回调函数
+        void goalCntCB(const geometry_msgs::PoseStamped::ConstPtr &pose);  // 目標數量子回呼函數
 
-        void statusCB(const actionlib_msgs::GoalStatusArray::ConstPtr &statuses); // 状态子回调函数
+        void statusCB(const actionlib_msgs::GoalStatusArray::ConstPtr &statuses); // 狀態子回呼函數
 
-        void checkCycle();//确认循环
+        void checkCycle();//確認循環
 
-        void completeNavi();               // 第一个任务到达后，继续进行剩下任务点的导航任务
+        void completeNavi();               // 第一個任務到達後，繼續進行剩下任務點的導航任務
         void cycleNavi();
 
-        bool checkGoal(std::vector<actionlib_msgs::GoalStatus> status_list);  // 检查是否到达目标点
+        bool checkGoal(std::vector<actionlib_msgs::GoalStatus> status_list);  // 檢查是否到達目標點
 
-        static void startSpin(); // 启用ROS订阅
+        static void startSpin(); // 啟用ROS訂閱
     protected:
         QLineEdit *output_maxNumGoal_editor_;
         QPushButton *output_maxNumGoal_button_, *output_reset_button_, *output_startNavi_button_, *output_cancel_button_;
@@ -148,7 +148,7 @@ namespace navi_multi_goals_pub_rviz_plugin {
         ros::NodeHandle nh_;
         ros::Publisher goal_pub_, cancel_pub_, marker_pub_;
         ros::Subscriber goal_sub_, status_sub_;
-        // 多目标点任务栏定义
+        // 多目標點工作列定義
         int maxNumGoal_;
         int curGoalIdx_ = 0, cycleCnt_ = 0;
         bool permit_ = false, cycle_ = false, arrived_ = false;
@@ -162,7 +162,7 @@ namespace navi_multi_goals_pub_rviz_plugin {
 #endif // MULTI_NAVI_GOAL_PANEL_H
 ```
 
-#### 2. cpp文件 multi_navi_goal_panel.cpp
+#### 2. cpp檔案 multi_navi_goal_panel.cpp
 
 ```
 #include <cstdio>
@@ -206,14 +206,14 @@ namespace navi_multi_goals_pub_rviz_plugin {
         QVBoxLayout *root_layout = new QVBoxLayout;
         // create a panel about "maxNumGoal"
         QHBoxLayout *maxNumGoal_layout = new QHBoxLayout;
-        maxNumGoal_layout->addWidget(new QLabel("目标最大数量"));
+        maxNumGoal_layout->addWidget(new QLabel("目標最大數量"));
         output_maxNumGoal_editor_ = new QLineEdit;
         maxNumGoal_layout->addWidget(output_maxNumGoal_editor_);
-        output_maxNumGoal_button_ = new QPushButton("确定");
+        output_maxNumGoal_button_ = new QPushButton("確定");
         maxNumGoal_layout->addWidget(output_maxNumGoal_button_);
         root_layout->addLayout(maxNumGoal_layout);
 
-        cycle_checkbox_ = new QCheckBox("循环");
+        cycle_checkbox_ = new QCheckBox("循環");
         root_layout->addWidget(cycle_checkbox_);
         // creat a QTable to contain the poseArray
         poseArray_table_ = new QTableWidget;
@@ -221,11 +221,11 @@ namespace navi_multi_goals_pub_rviz_plugin {
         root_layout->addWidget(poseArray_table_);
         //creat a manipulate layout
         QHBoxLayout *manipulate_layout = new QHBoxLayout;
-        output_reset_button_ = new QPushButton("重置");
+        output_reset_button_ = new QPushButton("重設");
         manipulate_layout->addWidget(output_reset_button_);
         output_cancel_button_ = new QPushButton("取消");
         manipulate_layout->addWidget(output_cancel_button_);
-        output_startNavi_button_ = new QPushButton("开始导航!");
+        output_startNavi_button_ = new QPushButton("開始導航!");
         manipulate_layout->addWidget(output_startNavi_button_);
         root_layout->addLayout(manipulate_layout);
 
@@ -234,7 +234,7 @@ namespace navi_multi_goals_pub_rviz_plugin {
         QTimer *output_timer = new QTimer(this);
         output_timer->start(200);
 
-        // 设置信号与槽的连接
+        // 設定訊號與槽的連接
         connect(output_maxNumGoal_button_, SIGNAL(clicked()), this,
                 SLOT(updateMaxNumGoal()));
         connect(output_maxNumGoal_button_, SIGNAL(clicked()), this,
@@ -255,11 +255,11 @@ namespace navi_multi_goals_pub_rviz_plugin {
 
 // set up the maximum number of goals
     void MultiNaviGoalsPanel::setMaxNumGoal(const QString &new_maxNumGoal) {
-        // 检查maxNumGoal是否发生改变.
+        // 檢查maxNumGoal是否發生改變.
         if (new_maxNumGoal != output_maxNumGoal_) {
             output_maxNumGoal_ = new_maxNumGoal;
 
-            // 如果命名为空，不发布任何信息
+            // 如果命名為空，不發佈任何資訊
             if (output_maxNumGoal_ == "") {
                 nh_.setParam("maxNumGoal_", 1);
                 maxNumGoal_ = 1;
@@ -476,7 +476,7 @@ namespace navi_multi_goals_pub_rviz_plugin {
 
 } // end namespace navi-multi-goals-pub-rviz-plugin
 
-// 声明此类是一个rviz的插件
+// 聲明此類是一個rviz的外掛
 
 #include <pluginlib/class_list_macros.h>
 
@@ -487,4 +487,4 @@ PLUGINLIB_EXPORT_CLASS(navi_multi_goals_pub_rviz_plugin::MultiNaviGoalsPanel, rv
 
 ### 使用
 
-使用请参考[使用说明](README.md)。
+使用請參考[使用說明](README.md)。
