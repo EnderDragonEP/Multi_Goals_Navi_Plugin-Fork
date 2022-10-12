@@ -33,13 +33,13 @@
         ![](images/intro5.png)
 
         ![](images/intro6.png)
-        
+
   * 修改 2D Nav Goal 按鈕話題
     * RViz 的左上角 Panels → Add New Panel → Tool Property
 
     ![](images/intro7.png)
 
-        ![](images/intro8.png)
+    ![](images/intro8.png)
 
     * 將 2D Nav Goal → Topic 修改為 /move_base_simple/goal_temp
     ![](images/intro9.png)
@@ -63,6 +63,7 @@
 * 初始化機器人位置
 
   * 點選開始導航，打開 rviz，使用鍵盤控制機器人運動，當環境特徵與地圖匹配完成後，機器人會定位到地圖中對應的位置。
+
 * 設定任務
 
   * 設定任務目標點個數，點選確認保存
