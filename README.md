@@ -6,7 +6,6 @@
 ## 1. 安裝
 
 1. 下載檔案
-
   進入到機器人工作目錄的 /src 目錄中，並執行以下指令來下載插件
     ```
     git clone https://github.com/EnderDragonEP/Multi_Goals_Navi_Plugin-Fork.git
