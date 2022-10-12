@@ -1,4 +1,4 @@
-#  原始碼解析 | SLAM 多點導航開發思路介紹
+# 原始碼解析 | SLAM 多點導航開發思路介紹
 
 ### 開發背景：
 
@@ -46,11 +46,9 @@ MultiNaviGoalsPanel是多點SLAM導航任務的可視化操作區，包括任務
 
 ![](images/dev3.png)
 
-
 ### 原始碼
 
 項目地址：https://github.com/autolaborcenter/rviz_navi_multi_goals_pub_plugin
-
 
 #### 程式碼實現
 
@@ -76,7 +74,6 @@ Subsrciber：
 
 * 訂閱來自rviz中2D Nav Goal的導航目標點消息的goal_sub_
 * 訂閱目前導航狀態的status_sub_
-
 
 ```
 #ifndef MULTI_NAVI_GOAL_PANEL_H
@@ -165,7 +162,7 @@ namespace navi_multi_goals_pub_rviz_plugin {
 #### 2. cpp檔案 multi_navi_goal_panel.cpp
 
 ```
-#include <cstdio>
+include <cstdio>
 
 #include <ros/console.h>
 
@@ -206,14 +203,14 @@ namespace navi_multi_goals_pub_rviz_plugin {
         QVBoxLayout *root_layout = new QVBoxLayout;
         // create a panel about "maxNumGoal"
         QHBoxLayout *maxNumGoal_layout = new QHBoxLayout;
-        maxNumGoal_layout->addWidget(new QLabel("目標最大數量"));
+        maxNumGoal_layout->addWidget(new QLabel("Max Goals"));
         output_maxNumGoal_editor_ = new QLineEdit;
         maxNumGoal_layout->addWidget(output_maxNumGoal_editor_);
-        output_maxNumGoal_button_ = new QPushButton("確定");
+        output_maxNumGoal_button_ = new QPushButton("Confirm");
         maxNumGoal_layout->addWidget(output_maxNumGoal_button_);
         root_layout->addLayout(maxNumGoal_layout);
 
-        cycle_checkbox_ = new QCheckBox("循環");
+        cycle_checkbox_ = new QCheckBox("Loop");
         root_layout->addWidget(cycle_checkbox_);
         // creat a QTable to contain the poseArray
         poseArray_table_ = new QTableWidget;
@@ -221,11 +218,11 @@ namespace navi_multi_goals_pub_rviz_plugin {
         root_layout->addWidget(poseArray_table_);
         //creat a manipulate layout
         QHBoxLayout *manipulate_layout = new QHBoxLayout;
-        output_reset_button_ = new QPushButton("重設");
+        output_reset_button_ = new QPushButton("Reset");
         manipulate_layout->addWidget(output_reset_button_);
-        output_cancel_button_ = new QPushButton("取消");
+        output_cancel_button_ = new QPushButton("Cancel");
         manipulate_layout->addWidget(output_cancel_button_);
-        output_startNavi_button_ = new QPushButton("開始導航!");
+        output_startNavi_button_ = new QPushButton("Start Mission");
         manipulate_layout->addWidget(output_startNavi_button_);
         root_layout->addLayout(manipulate_layout);
 
@@ -483,7 +480,6 @@ namespace navi_multi_goals_pub_rviz_plugin {
 PLUGINLIB_EXPORT_CLASS(navi_multi_goals_pub_rviz_plugin::MultiNaviGoalsPanel, rviz::Panel)
 
 ```
-
 
 ### 使用
 

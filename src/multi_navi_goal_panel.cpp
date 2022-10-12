@@ -39,14 +39,14 @@ namespace navi_multi_goals_pub_rviz_plugin {
         QVBoxLayout *root_layout = new QVBoxLayout;
         // create a panel about "maxNumGoal"
         QHBoxLayout *maxNumGoal_layout = new QHBoxLayout;
-        maxNumGoal_layout->addWidget(new QLabel("目标最大数量"));
+        maxNumGoal_layout->addWidget(new QLabel("Max Goals"));
         output_maxNumGoal_editor_ = new QLineEdit;
         maxNumGoal_layout->addWidget(output_maxNumGoal_editor_);
-        output_maxNumGoal_button_ = new QPushButton("确定");
+        output_maxNumGoal_button_ = new QPushButton("Confirm");
         maxNumGoal_layout->addWidget(output_maxNumGoal_button_);
         root_layout->addLayout(maxNumGoal_layout);
 
-        cycle_checkbox_ = new QCheckBox("循环");
+        cycle_checkbox_ = new QCheckBox("Loops");
         root_layout->addWidget(cycle_checkbox_);
         // creat a QTable to contain the poseArray
         poseArray_table_ = new QTableWidget;
@@ -54,11 +54,11 @@ namespace navi_multi_goals_pub_rviz_plugin {
         root_layout->addWidget(poseArray_table_);
         //creat a manipulate layout
         QHBoxLayout *manipulate_layout = new QHBoxLayout;
-        output_reset_button_ = new QPushButton("重置");
+        output_reset_button_ = new QPushButton("Reset");
         manipulate_layout->addWidget(output_reset_button_);
-        output_cancel_button_ = new QPushButton("取消");
+        output_cancel_button_ = new QPushButton("Cancel");
         manipulate_layout->addWidget(output_cancel_button_);
-        output_startNavi_button_ = new QPushButton("开始导航!");
+        output_startNavi_button_ = new QPushButton("Start Mission!");
         manipulate_layout->addWidget(output_startNavi_button_);
         root_layout->addLayout(manipulate_layout);
 
@@ -67,7 +67,7 @@ namespace navi_multi_goals_pub_rviz_plugin {
         QTimer *output_timer = new QTimer(this);
         output_timer->start(200);
 
-        // 设置信号与槽的连接
+        // 設定訊號與槽的連接
         connect(output_maxNumGoal_button_, SIGNAL(clicked()), this,
                 SLOT(updateMaxNumGoal()));
         connect(output_maxNumGoal_button_, SIGNAL(clicked()), this,
@@ -88,11 +88,11 @@ namespace navi_multi_goals_pub_rviz_plugin {
 
 // set up the maximum number of goals
     void MultiNaviGoalsPanel::setMaxNumGoal(const QString &new_maxNumGoal) {
-        // 检查maxNumGoal是否发生改变.
+        // 檢查maxNumGoal是否發生改變.
         if (new_maxNumGoal != output_maxNumGoal_) {
             output_maxNumGoal_ = new_maxNumGoal;
 
-            // 如果命名为空，不发布任何信息
+            // 如果命名為空，不發佈任何資訊
             if (output_maxNumGoal_ == "") {
                 nh_.setParam("maxNumGoal_", 1);
                 maxNumGoal_ = 1;
@@ -309,9 +309,8 @@ namespace navi_multi_goals_pub_rviz_plugin {
 
 } // end namespace navi-multi-goals-pub-rviz-plugin
 
-// 声明此类是一个rviz的插件
+// 聲明此類是一個rviz的外掛
 
 #include <pluginlib/class_list_macros.h>
 
 PLUGINLIB_EXPORT_CLASS(navi_multi_goals_pub_rviz_plugin::MultiNaviGoalsPanel, rviz::Panel)
-
