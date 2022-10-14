@@ -8,7 +8,7 @@
 1. 下載檔案
   進入到機器人工作目錄的 /src 目錄中，並執行以下指令來下載插件
     ```
-    git clone https://github.com/EnderDragonEP/Multi_Goals_Navi_Plugin-Fork.git
+    git clone https://github.com/EnderDragonEP/multi_foals_navi_plugin-fork.git
     ```
 
     **註：要求提前建好地圖**
