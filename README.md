@@ -16,11 +16,15 @@
 
 2. 編譯
   在工作區目錄下，執行以下指令來進行編譯
+  ```
   catkin build
-
+  ```
+  
 3. 安裝依賴元件
   在工作區目錄下，執行以下指令來進行編譯
+  ```
   rosdep install -q -y -r --from-paths src --ignore-src
+  ```
 
 4. 載入外掛
 
