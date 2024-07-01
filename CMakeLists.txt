@@ -8,7 +8,7 @@ find_package(catkin REQUIRED COMPONENTS rviz geometry_msgs std_msgs actionlib_ms
 catkin_package(CATKIN_DEPENDS message_runtime)
 include_directories(${catkin_INCLUDE_DIRS})
 link_directories(${catkin_LIBRARY_DIRS})
-
+add_definitions(-std=c++11)
 ## This setting causes Qt's "MOC" generation to happen automatically.
 set(CMAKE_AUTOMOC ON)
 
