@@ -28,7 +28,7 @@
 
 4. 載入外掛
 
-    RViz 的左上角依次點選 Panels → Add New Panel → navi_multi_goals_pub_rviz_plugin → MultiNaviGoalsPanel
+    RViz 的左上角依次點選 Panels → Add New Panel → multi_goals_navi_plugin → MultiNaviGoalsPanel
 
     ![](images/intro2.png)
 

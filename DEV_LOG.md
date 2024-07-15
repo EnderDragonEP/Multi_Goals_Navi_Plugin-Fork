@@ -100,7 +100,7 @@ Subsrciber：
 #include <actionlib_msgs/GoalStatusArray.h>
 #include <tf/transform_datatypes.h>
 
-namespace navi_multi_goals_pub_rviz_plugin {
+namespace multi_goals_navi_plugin {
 
     class MultiNaviGoalsPanel : public rviz::Panel {
     Q_OBJECT
@@ -181,7 +181,7 @@ include <cstdio>
 
 #include "multi_navi_goal_panel.h"
 
-namespace navi_multi_goals_pub_rviz_plugin {
+namespace multi_goals_navi_plugin {
 
 
     MultiNaviGoalsPanel::MultiNaviGoalsPanel(QWidget *parent)
@@ -477,7 +477,7 @@ namespace navi_multi_goals_pub_rviz_plugin {
 
 #include <pluginlib/class_list_macros.h>
 
-PLUGINLIB_EXPORT_CLASS(navi_multi_goals_pub_rviz_plugin::MultiNaviGoalsPanel, rviz::Panel)
+PLUGINLIB_EXPORT_CLASS(multi_goals_navi_plugin::MultiNaviGoalsPanel, rviz::Panel)
 
 ```
 

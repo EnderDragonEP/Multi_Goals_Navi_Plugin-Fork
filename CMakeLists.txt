@@ -3,7 +3,7 @@
 ##
 ## First start with some standard catkin stuff.
 cmake_minimum_required(VERSION 2.8.3)
-project(navi_multi_goals_pub_rviz_plugin)
+project(multi_goals_navi_plugin)
 find_package(catkin REQUIRED COMPONENTS rviz geometry_msgs std_msgs actionlib_msgs)
 catkin_package(CATKIN_DEPENDS message_runtime)
 include_directories(${catkin_INCLUDE_DIRS})

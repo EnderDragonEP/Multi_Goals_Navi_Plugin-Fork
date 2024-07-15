@@ -23,7 +23,7 @@
 #include <tf/transform_datatypes.h>
 
 
-namespace navi_multi_goals_pub_rviz_plugin {
+namespace multi_goals_navi_plugin {
 
 
 
