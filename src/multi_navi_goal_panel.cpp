@@ -178,14 +178,25 @@ namespace multi_goals_navi_plugin {
             arrow.type = visualization_msgs::Marker::ARROW;
             number.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
             arrow.pose = number.pose = pose->pose;
+
             number.pose.position.z += 1.0;
-            arrow.scale.x = 1.0;
-            arrow.scale.y = 0.2;
-            number.scale.z = 1.0;
-            arrow.color.r = number.color.r = 1.0f;
-            arrow.color.g = number.color.g = 0.98f;
-            arrow.color.b = number.color.b = 0.80f;
-            arrow.color.a = number.color.a = 1.0;
+
+            arrow.scale.x = 3.0;
+            arrow.scale.y = 0.5;
+            arrow.scale.z = 0.5;
+
+            number.scale.z = 2.0;
+
+            arrow.color.r = 0.10f;
+            arrow.color.g = 0.20f;
+            arrow.color.b = 1.0f;
+            arrow.color.a = 0.90;
+
+            number.color.r = 1.0f;
+            number.color.g = 0.98f;
+            number.color.b = 0.80f;
+            number.color.a = 1.0;
+
             arrow.id = number.id = pose_array_.poses.size();
             number.text = std::to_string(pose_array_.poses.size());
             marker_pub_.publish(arrow);
